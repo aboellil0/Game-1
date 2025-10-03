@@ -190,7 +190,7 @@ const TerraGame = () => {
             setCombo(c => c + 1);
             lastComboTime.current = Date.now();
             setShowFact(point.instrument);
-            setTimeout(() => setShowFact(null), 5000);
+            setTimeout(() => setShowFact(null), 12000);
             return false;
           }
           return true;

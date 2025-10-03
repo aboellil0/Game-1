@@ -3,6 +3,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Satellite, Trophy, BookOpen, AlertCircle, Zap } from 'lucide-react';
 
+type GameState = 'menu' | 'info' | 'playing' | 'complete';
+
+interface Position {
+  x: number;
+  y: number;
+}
+
 interface Instrument {
   id: string;
   name: string;
@@ -21,12 +28,9 @@ interface DataPoint {
   collected: boolean;
 }
 
-interface Position {
-  x: number;
-  y: number;
+interface KeysPressed {
+  [key: string]: boolean;
 }
-
-type GameState = 'menu' | 'info' | 'playing' | 'complete';
 
 const TerraGame: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>('menu');
@@ -89,15 +93,15 @@ const TerraGame: React.FC = () => {
   const [dataPoints, setDataPoints] = useState<DataPoint[]>([]);
   const [satellitePos, setSatellitePos] = useState<Position>({ x: 50, y: 20 });
   const [starOffset, setStarOffset] = useState<number>(0);
-  const keysPressed = useRef<{ [key: string]: boolean }>({});
+  const keysPressed = useRef<KeysPressed>({});
   const lastComboTime = useRef<number>(Date.now());
 
   // Animate stars slowly
   useEffect(() => {
     if (gameState === 'playing') {
       const starAnimation = setInterval(() => {
-        setStarOffset(prev => (prev + 0.005) % 100); // Reduced from 0.01 to 0.005
-      }, 500); // Increased from 300ms to 500ms
+        setStarOffset(prev => (prev + 0.1) % 100);
+      }, 200);
       return () => clearInterval(starAnimation);
     }
   }, [gameState]);
@@ -134,7 +138,7 @@ const TerraGame: React.FC = () => {
           }
           return prev;
         });
-      }, 5000); // Increased from 3500ms to 5000ms
+      }, 5000);
 
       return () => clearInterval(interval);
     }
@@ -159,7 +163,7 @@ const TerraGame: React.FC = () => {
       setSatellitePos(prev => {
         let newX = prev.x;
         let newY = prev.y;
-        const speed = 0.5; // Reduced from 0.8 to 0.5
+        const speed = 0.5;
 
         // Diagonal and cardinal movement
         if (keysPressed.current['ArrowLeft']) newX -= speed;
@@ -215,7 +219,7 @@ const TerraGame: React.FC = () => {
             setCombo(c => c + 1);
             lastComboTime.current = Date.now();
             setShowFact(point.instrument);
-            setTimeout(() => setShowFact(null), 8000); // Increased from 5000ms to 8000ms
+            setTimeout(() => setShowFact(null), 12000);
             return false;
           }
           return true;
